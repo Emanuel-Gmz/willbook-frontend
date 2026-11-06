@@ -1,0 +1,155 @@
+<div class="container py-5">
+  <!-- Encabezado -->
+  <div class="row mb-4">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+      <div>
+        <h2 class="fw-bold text-primary">Gestión de Libros y Ejemplares</h2>
+        <p class="text-muted">Da de alta nuevas obras editoriales y administra el inventario físico.</p>
+      </div>
+      <button class="btn btn-primary fw-bold" (click)="abrirModalLibro()">
+        + Nuevo Libro
+      </button>
+    </div>
+  </div>
+
+  <!-- Alertas -->
+  <div *ngIf="successMessage" class="alert alert-success shadow-sm" role="alert">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger shadow-sm" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Estado de Carga -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted">Cargando catálogo e inventario...</p>
+  </div>
+
+  <!-- Grilla de Libros -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" *ngIf="!isLoading && libros.length > 0">
+    <div class="col" *ngFor="let libro of libros">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-start mb-2">
+            <span class="badge bg-secondary">{{ libro.categoria }}</span>
+            <small class="text-muted">ISBN: {{ libro.isbn }}</small>
+          </div>
+          
+          <h5 class="card-title fw-bold text-primary">{{ libro.titulo }}</h5>
+          <p class="text-muted small mb-3">Autor: {{ libro.autor }} | Editorial: {{ libro.editorial }} ({{ libro.anioPublicacion }})</p>
+
+          <!-- Lista de Ejemplares -->
+          <div class="mb-3 mt-auto">
+            <h6 class="fw-bold small text-dark">Ejemplares Físicos ({{ libro.ejemplares?.length || 0 }})</h6>
+            <div class="d-flex flex-wrap gap-1">
+              <span *ngFor="let ej of libro.ejemplares" 
+                    class="badge" 
+                    [ngClass]="ej.estado === 'DISPONIBLE' ? 'bg-success' : 'bg-warning text-dark'">
+                {{ ej.codigoInventario }} ({{ ej.estado }})
+              </span>
+              <span *ngIf="!libro.ejemplares || libro.ejemplares.length === 0" class="text-muted small fst-italic">
+                Sin ejemplares registrados.
+              </span>
+            </div>
+          </div>
+
+          <!-- Botón Agregar Ejemplar -->
+          <button class="btn btn-outline-primary btn-sm w-100 fw-semibold mt-2" 
+                  (click)="abrirModalEjemplar(libro)">
+            + Agregar Ejemplar Físico
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MANUAL: Crear Nuevo Libro -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="mostrarModalLibro">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-primary">Registrar Nueva Obra en el Catálogo</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalLibro()"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmitCrearLibro()" #libroForm="ngForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Título</label>
+              <input type="text" class="form-control" name="titulo" [(ngModel)]="nuevoLibro.titulo" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Autor</label>
+              <select class="form-select" name="autorId" [(ngModel)]="nuevoLibro.autorId" required>
+                <option [ngValue]="0" disabled>Seleccione un autor</option>
+                <option *ngFor="let a of autores" [ngValue]="a.id">{{ a.nombre }} {{ a.apellido }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-semibold">ISBN</label>
+              <input type="text" class="form-control" name="isbn" [(ngModel)]="nuevoLibro.isbn" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-semibold">Editorial</label>
+              <input type="text" class="form-control" name="editorial" [(ngModel)]="nuevoLibro.editorial">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-semibold">Año de Publicación</label>
+              <input type="number" class="form-control" name="anioPublicacion" [(ngModel)]="nuevoLibro.anioPublicacion" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Categoría / Género</label>
+              <select class="form-select" name="categoriaId" [(ngModel)]="nuevoLibro.categoriaId" required>
+                <option [ngValue]="0" disabled>Seleccione una categoría</option>
+                <option *ngFor="let c of categorias" [ngValue]="c.id">{{ c.nombre }}</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">URL de la Portada</label>
+              <input type="text" class="form-control" name="portadaUrl" [(ngModel)]="nuevoLibro.portadaUrl" placeholder="https://...">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Descripción / Sinopsis</label>
+            <textarea class="form-control" name="descripcion" rows="3" [(ngModel)]="nuevoLibro.descripcion"></textarea>
+          </div>
+          <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModalLibro()">Cancelar</button>
+            <button type="submit" class="btn btn-primary fw-bold" [disabled]="!libroForm.valid || nuevoLibro.autorId === 0 || nuevoLibro.categoriaId === 0">Guardar Libro</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MANUAL: Agregar Ejemplar -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="mostrarModalEjemplar">
+  <div class="modal-dialog">
+    <div class="modal-content" *ngIf="libroSeleccionado">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-primary">Agregar Ejemplar Físico</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalEjemplar()"></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small">Agregando ejemplar para la obra: <strong class="text-dark">{{ libroSeleccionado.titulo }}</strong></p>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Código de Inventario (Ej: INV-LIB-005)</label>
+          <input type="text" class="form-control" [(ngModel)]="nuevoCodigoInventario" placeholder="INV-LIB-...">
+        </div>
+      </div>    
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cerrarModalEjemplar()">Cancelar</button>
+        <button type="button" class="btn btn-primary fw-bold" (click)="agregarEjemplar()" [disabled]="!nuevoCodigoInventario.trim()">Registrar Ejemplar</button>
+      </div>
+    </div>
+  </div>
+</div>

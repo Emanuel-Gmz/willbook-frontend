@@ -1,15 +1,15 @@
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #4A3320;">
   <div class="container">
-    <a class="navbar-brand fw-bold" routerLink="/catalogo">
-      📚 WillBook
+    <a class="navbar-brand fw-bold d-flex align-items-center gap-2" routerLink="/catalogo">
+      <span>📚</span> <span>WillBook</span>
     </a>
     
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav align-items-center gap-3">
+      <ul class="navbar-nav align-items-lg-center gap-2 gap-lg-3 py-2 py-lg-0">
         
         <!-- Si está autenticado -->
         <ng-container *ngIf="authService.isAuthenticated()">
@@ -17,20 +17,40 @@
           <!-- Opciones para Lector -->
           <ng-container *ngIf="usuarioActual?.rol === 'LECTOR'">
             <li class="nav-item">
-              <a class="nav-link" routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+              <a class="nav-link px-2 py-1" routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" routerLink="/mis-prestamos" routerLinkActive="active">Mis Préstamos</a>
+              <a class="nav-link px-2 py-1" routerLink="/mis-prestamos" routerLinkActive="active">Mis Préstamos</a>
             </li>
           </ng-container>
 
-          <!-- Saludo y Botón Salir -->
-          <li class="nav-item text-light small">
+          <!-- Opciones para Bibliotecario / Admin -->
+          <ng-container *ngIf="usuarioActual?.rol === 'BIBLIOTECARIO' || usuarioActual?.rol === 'ADMIN'">
+            <li class="nav-item">
+              <a class="nav-link px-2 py-1" routerLink="/admin/gestion-prestamos" routerLinkActive="active">Gestionar Préstamos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2 py-1" routerLink="/admin/gestion-libros" routerLinkActive="active">Inventario de Libros</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2 py-1" routerLink="/admin/gestion-multas" routerLinkActive="active">Gestión de Multas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link px-2 py-1" routerLink="/admin/gestion-catalogos" routerLinkActive="active">Autores y Categorías</a>
+            </li>
+          </ng-container>
+
+          <!-- Notificaciones y Saludo -->
+          <li class="nav-item">
+             <app-notification-bell></app-notification-bell>
+          </li>
+
+          <li class="nav-item text-light small ms-lg-2 mt-2 mt-lg-0">
             Hola, <span class="fw-bold">{{ usuarioActual?.nombreCompleto }}</span>
           </li>
           
-          <li class="nav-item">
-            <button class="btn btn-outline-light btn-sm px-3" (click)="logout()">
+          <li class="nav-item mt-1 mt-lg-0">
+            <button class="btn btn-outline-light btn-sm px-3 w-100 w-lg-auto" (click)="logout()">
               Cerrar Sesión
             </button>
           </li>
@@ -39,10 +59,10 @@
         <!-- Si NO está autenticado -->
         <ng-container *ngIf="!authService.isAuthenticated()">
           <li class="nav-item">
-            <a class="nav-link" routerLink="/auth/login">Iniciar Sesión</a>
+            <a class="nav-link px-2 py-1" routerLink="/auth/login">Iniciar Sesión</a>
           </li>
-          <li class="nav-item">
-            <a class="btn btn-light btn-sm text-dark fw-bold px-3" routerLink="/auth/register">Registrarse</a>
+          <li class="nav-item mt-2 mt-lg-0">
+            <a class="btn btn-light btn-sm text-dark fw-bold px-3 w-100 w-lg-auto" routerLink="/auth/register">Registrarse</a>
           </li>
         </ng-container>
 

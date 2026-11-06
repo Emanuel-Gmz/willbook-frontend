@@ -1,0 +1,74 @@
+<div class="container py-5">
+  <!-- Encabezado -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h2 class="fw-bold text-primary">Gestión de Préstamos y Solicitudes</h2>
+      <p class="text-muted">Administra las solicitudes pendientes de retiro realizadas por los lectores.</p>
+    </div>
+  </div>
+
+  <!-- Alertas de Éxito / Error -->
+  <div *ngIf="successMessage" class="alert alert-success shadow-sm" role="alert">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger shadow-sm" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Estado de Carga -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted">Buscando solicitudes pendientes...</p>
+  </div>
+
+  <!-- Mensaje Vacío -->
+  <div *ngIf="!isLoading && prestamosPendientes.length === 0" class="alert alert-info text-center shadow-sm" role="alert">
+    No hay solicitudes de préstamo pendientes de retiro en este momento.
+  </div>
+
+  <!-- Tabla de Solicitudes Pendientes -->
+  <div class="card shadow-sm border-0" *ngIf="!isLoading && prestamosPendientes.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light text-uppercase fs-7">
+          <tr>
+            <th class="py-3 ps-4">Lector</th>
+            <th class="py-3">Obra Solicitada</th>
+            <th class="py-3">Ejemplar (Inventario)</th>
+            <th class="py-3">Fecha de Solicitud</th>
+            <th class="py-3 text-center pe-4">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of prestamosPendientes">
+            <td class="ps-4">
+              <div class="fw-bold text-dark">{{ p.nombreLector }}</div>
+              <small class="text-muted">{{ p.emailLector }}</small>
+            </td>
+            <td>
+              <span class="fw-semibold text-primary">{{ p.tituloLibro }}</span>
+            </td>
+            <td>
+              <code>{{ p.codigoEjemplar || 'Asignación automática' }}</code>
+            </td>
+            <td>
+              <small class="text-muted">{{ p.fechaSolicitud | date:'dd/MM/yyyy HH:mm' }}</small>
+            </td>
+            <td class="text-center pe-4">
+              <div class="d-flex justify-content-center gap-2">
+                <button class="btn btn-success btn-sm fw-semibold" (click)="confirmarPrestamo(p.idPrestamo)">
+                  Confirmar Retiro
+                </button>
+                <button class="btn btn-outline-danger btn-sm" (click)="cancelarReserva(p.idPrestamo)">
+                  Cancelar
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

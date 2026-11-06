@@ -1,0 +1,31 @@
+<div class="dropdown position-relative">
+  <!-- Botón Campana con Badge de Conteo -->
+  <button class="btn btn-link text-light position-relative text-decoration-none p-1" (click)="toggleDropdown()">
+    🔔
+    <span *ngIf="contadorNoLeidas > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.65rem;">
+      {{ contadorNoLeidas }}
+    </span>
+  </button>
+
+  <!-- Menú desplegable de notificaciones -->
+  <div class="dropdown-menu dropdown-menu-end show shadow p-2" *ngIf="mostrarDropdown" style="width: 300px; max-height: 400px; overflow-y: auto; right: 0; left: auto; position: absolute;">
+    <div class="d-flex justify-content-between align-items-center mb-2 px-2 pb-2 border-bottom">
+      <h6 class="fw-bold text-primary mb-0 small">Notificaciones</h6>
+      <button *ngIf="contadorNoLeidas > 0" class="btn btn-link btn-sm p-0 text-decoration-none small" (click)="marcarTodas()">
+        Marcar leídas
+      </button>
+    </div>
+
+    <!-- Lista de notificaciones -->
+    <div *ngIf="notificaciones.length > 0; else sinNotis">
+      <div *ngFor="let n of notificaciones" class="p-2 mb-1 rounded border-bottom text-wrap" [ngClass]="n.leida ? 'bg-light text-muted' : 'bg-white fw-semibold text-dark'" style="font-size: 0.85rem; cursor: pointer;" (click)="marcarLeida(n.id)">
+        <p class="mb-1">{{ n.mensaje }}</p>
+        <small class="text-muted" style="font-size: 0.7rem;">{{ n.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</small>
+      </div>
+    </div>
+
+    <ng-template #sinNotis>
+      <p class="text-center text-muted small py-3 mb-0">No tienes notificaciones recientes.</p>
+    </ng-template>
+  </div>
+</div>
