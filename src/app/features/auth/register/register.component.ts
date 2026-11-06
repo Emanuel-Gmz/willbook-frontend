@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { LocalidadService, LocalidadResponse } from '../../../core/services/localidad.service';
 import { RegisterRequest } from '../../../core/models/auth.models';
 
 @Component({
@@ -12,8 +13,9 @@ import { RegisterRequest } from '../../../core/models/auth.models';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   private authService = inject(AuthService);
+  private localidadService = inject(LocalidadService);
   private router = inject(Router);
 
   registerData: RegisterRequest = {
@@ -26,15 +28,24 @@ export class RegisterComponent {
     localidadId: 0
   };
 
-  // Lista temporal para el select. Luego se consumirá desde LocalidadService.
-  localidades = [
-    { id: 1, nombre: 'Villa Guillermina' },
-    { id: 2, nombre: 'Las Toscas' },
-    { id: 3, nombre: 'Reconquista' }
-  ];
-
+  localidades: LocalidadResponse[] = [];
   errorMessage: string = '';
   isLoading: boolean = false;
+
+  ngOnInit(): void {
+    this.cargarLocalidades();
+  }
+
+  cargarLocalidades(): void {
+    this.localidadService.listarLocalidades().subscribe({
+      next: (res) => {
+        this.localidades = res;
+      },
+      error: (err) => {
+        console.error('Error al cargar localidades', err);
+      }
+    });
+  }
 
   onSubmit() {
     if (this.registerData.password !== this.registerData.confirmacionPassword) {
@@ -42,7 +53,7 @@ export class RegisterComponent {
       return;
     }
     
-    if (this.registerData.localidadId === 0) {
+    if (!this.registerData.localidadId || Number(this.registerData.localidadId) === 0) {
       this.errorMessage = 'Debe seleccionar una localidad';
       return;
     }
@@ -52,12 +63,10 @@ export class RegisterComponent {
 
     this.authService.register(this.registerData).subscribe({
       next: (response) => {
-        // Al registrarse exitosamente como lector, lo enviamos al inicio
-        this.router.navigate(['/home']);
+        this.router.navigate(['/catalogo']);
       },
       error: (err) => {
         this.isLoading = false;
-        // Capturamos conflictos como Email o DNI duplicados (409) o validaciones (400)
         if (err.status === 409) {
           this.errorMessage = err.error.message || 'El DNI o correo ya se encuentran registrados.';
         } else {
