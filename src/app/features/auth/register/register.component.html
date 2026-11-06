@@ -1,0 +1,76 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow-sm p-4" style="width: 100%; max-width: 600px; border-radius: 12px;">
+    
+    <div class="text-center mb-4">
+      <h2 class="fw-bold text-primary">WillBook</h2>
+      <p class="text-muted">Crea tu cuenta de Lector</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
+      <div class="row">
+        <!-- Nombre -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Nombre</label>
+          <input type="text" class="form-control" name="nombre" [(ngModel)]="registerData.nombre" required>
+        </div>
+        
+        <!-- Apellido -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Apellido</label>
+          <input type="text" class="form-control" name="apellido" [(ngModel)]="registerData.apellido" required>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- DNI -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">DNI</label>
+          <input type="text" class="form-control" name="dni" [(ngModel)]="registerData.dni" required>
+        </div>
+
+        <!-- Localidad -->
+        <div class="col-md-6 mb-3">
+          <label class="form-label fw-semibold">Localidad</label>
+          <select class="form-select" name="localidad" [(ngModel)]="registerData.localidadId" required>
+            <option value="0" disabled selected>Selecciona tu localidad</option>
+            <option *ngFor="let loc of localidades" [value]="loc.id">{{ loc.nombre }}</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Correo Electrónico</label>
+        <input type="email" class="form-control" name="email" [(ngModel)]="registerData.email" required placeholder="ejemplo@correo.com">
+      </div>
+
+      <div class="row">
+        <!-- Contraseña -->
+        <div class="col-md-6 mb-4">
+          <label class="form-label fw-semibold">Contraseña</label>
+          <input type="password" class="form-control" name="password" [(ngModel)]="registerData.password" required minlength="8">
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div class="col-md-6 mb-4">
+          <label class="form-label fw-semibold">Confirmar Contraseña</label>
+          <input type="password" class="form-control" name="confirmacionPassword" [(ngModel)]="registerData.confirmacionPassword" required minlength="8">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" [disabled]="!registerForm.valid || registerData.localidadId === 0 || isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        {{ isLoading ? 'Registrando...' : 'Crear Cuenta' }}
+      </button>
+    </form>
+
+    <div class="text-center mt-4">
+      <p class="mb-0">¿Ya tienes cuenta? <a routerLink="/auth/login" class="text-decoration-none fw-bold">Inicia Sesión</a></p>
+    </div>
+    
+  </div>
+</div>

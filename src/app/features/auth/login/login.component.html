@@ -1,0 +1,59 @@
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+  <div class="card shadow-sm p-4" style="width: 100%; max-width: 450px; border-radius: 12px;">
+    
+    <div class="text-center mb-4">
+      <h2 class="fw-bold text-primary">WillBook</h2>
+      <p class="text-muted">Ingresa a tu cuenta para continuar</p>
+    </div>
+
+    <!-- Alerta de Error -->
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <!-- Input de Email (Username) -->
+      <div class="mb-3">
+        <label for="username" class="form-label fw-semibold">Correo Electrónico</label>
+        <input 
+          type="email" 
+          class="form-control" 
+          id="username" 
+          name="username" 
+          [(ngModel)]="credentials.username" 
+          required 
+          placeholder="ejemplo@correo.com">
+      </div>
+
+      <!-- Input de Password -->
+      <div class="mb-4">
+        <div class="d-flex justify-content-between">
+          <label for="password" class="form-label fw-semibold">Contraseña</label>
+          <a href="#" class="text-decoration-none small">¿Olvidaste tu contraseña?</a>
+        </div>
+        <input 
+          type="password" 
+          class="form-control" 
+          id="password" 
+          name="password" 
+          [(ngModel)]="credentials.password" 
+          required 
+          placeholder="Ingresa tu contraseña">
+      </div>
+
+      <!-- Botón de Submit -->
+      <button 
+        type="submit" 
+        class="btn btn-primary w-100 py-2 fw-bold" 
+        [disabled]="!loginForm.valid || isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        {{ isLoading ? 'Ingresando...' : 'Iniciar Sesión' }}
+      </button>
+    </form>
+
+    <div class="text-center mt-4">
+      <p class="mb-0">¿No tienes cuenta? <a routerLink="/auth/register" class="text-decoration-none fw-bold">Regístrate como Lector</a></p>
+    </div>
+    
+  </div>
+</div>

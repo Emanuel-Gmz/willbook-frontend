@@ -1,1 +1,71 @@
-/* You can add global styles to this file, and also import other style files */
+/* 1. Importación de Bootstrap (DEBE ir primero) */
+@import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+
+/* 2. Definición de la Paleta de Colores de WillBook */
+:root {
+  /* Tonos Marrones Principales */
+  --wb-brown-dark: #4A3320;      /* Marrón oscuro (Madera/Títulos) */
+  --wb-brown-primary: #8B5A2B;   /* Marrón cálido (Botones principales/Acentos) */
+  --wb-brown-light: #CDAA7D;     /* Marrón claro (Bordes/Focos) */
+  
+  /* Tonos Beige/Arena para Fondos */
+  --wb-bg-main: #F5EFEB;         /* Fondo general de la página (crema/arena) */
+  --wb-bg-card: #FAF6F3;         /* Fondo de las tarjetas/formularios (más claro) */
+  
+  /* Tonos para Textos */
+  --wb-text-main: #332211;       /* Texto principal (marrón muy oscuro, casi negro) */
+  --wb-text-muted: #7A624E;      /* Texto secundario (marrón grisáceo) */
+}
+
+/* 3. Aplicar colores al cuerpo (Body) de la aplicación */
+body {
+  background-color: var(--wb-bg-main);
+  color: var(--wb-text-main);
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* 4. Sobrescribir colores de Bootstrap (Tarjetas, Botones, Textos) */
+
+/* Tarjetas (Formularios) */
+.card {
+  background-color: var(--wb-bg-card);
+  border: 1px solid var(--wb-brown-light);
+  box-shadow: 0 4px 12px rgba(74, 51, 32, 0.08) !important; /* Sombra marrón sutil */
+}
+
+/* Botones Principales (Sobrescribe btn-primary de Bootstrap) */
+.btn-primary {
+  background-color: var(--wb-brown-primary) !important;
+  border-color: var(--wb-brown-primary) !important;
+  color: #fff !important;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: var(--wb-brown-dark) !important;
+  border-color: var(--wb-brown-dark) !important;
+  box-shadow: 0 0 0 0.25rem rgba(139, 90, 43, 0.25) !important;
+}
+
+/* Inputs y Formularios (Sobrescribe focus de Bootstrap) */
+.form-control:focus, .form-select:focus {
+  border-color: var(--wb-brown-light) !important;
+  box-shadow: 0 0 0 0.25rem rgba(205, 170, 125, 0.25) !important;
+}
+
+/* Clases de texto personalizadas */
+.text-primary {
+  color: var(--wb-brown-dark) !important;
+}
+
+.text-muted {
+  color: var(--wb-text-muted) !important;
+}
+
+/* Enlaces */
+a {
+  color: var(--wb-brown-primary);
+}
+
+a:hover {
+  color: var(--wb-brown-dark);
+}
