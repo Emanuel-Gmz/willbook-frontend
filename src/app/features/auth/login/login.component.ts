@@ -31,7 +31,7 @@ export class LoginComponent {
       next: (response) => {
         // Redirección basada en el rol del usuario
         if (response.rol === 'LECTOR') {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/catalogo']); // <-- Apuntamos directo al catálogo
         } else {
           this.router.navigate(['/admin/dashboard']);
         }
