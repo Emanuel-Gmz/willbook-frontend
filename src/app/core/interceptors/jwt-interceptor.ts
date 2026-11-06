@@ -14,8 +14,8 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
       }
     });
     return next(authReq);
-  }
+  } // <--- ¡Aquí faltaba cerrar esta llave!
 
-  // Si no hay token o es una petición a una API externa, sigue su curso normal
+  // Si no hay token o es una petición externa, sigue su curso normal
   return next(req);
 };

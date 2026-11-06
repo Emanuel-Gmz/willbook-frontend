@@ -36,8 +36,8 @@
         <div class="col-md-6 mb-3">
           <label class="form-label fw-semibold">Localidad</label>
           <select class="form-select" name="localidad" [(ngModel)]="registerData.localidadId" required>
-            <option value="0" disabled selected>Selecciona tu localidad</option>
-            <option *ngFor="let loc of localidades" [value]="loc.id">{{ loc.nombre }}</option>
+             <option [ngValue]="0" disabled selected>Selecciona tu localidad</option>
+             <option *ngFor="let loc of localidades" [ngValue]="loc.id">{{ loc.nombre }}</option>
           </select>
         </div>
       </div>

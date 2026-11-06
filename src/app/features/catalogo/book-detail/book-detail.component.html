@@ -1,0 +1,72 @@
+<div class="container py-5">
+  <!-- Botón Volver -->
+  <div class="mb-4">
+    <a routerLink="/catalogo" class="btn btn-outline-secondary btn-sm fw-semibold">
+      &larr; Volver al Catálogo
+    </a>
+  </div>
+
+  <!-- Estado de Carga -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted">Cargando detalles de la obra...</p>
+  </div>
+
+  <!-- Alertas de Éxito / Error -->
+  <div *ngIf="successMessage" class="alert alert-success shadow-sm" role="alert">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger shadow-sm" role="alert">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Contenido del Libro -->
+  <div class="card shadow-sm border-0 p-4" *ngIf="!isLoading && libro">
+    <div class="row g-4 align-items-center">
+      
+      <!-- Portada -->
+      <div class="col-md-4 text-center">
+        <img [src]="libro.portadaUrl || 'https://placehold.co/300x450/F5EFEB/7A624E?text=Sin+Portada'" 
+             class="img-fluid rounded shadow-sm border" 
+             style="max-height: 400px; object-fit: cover;"
+             alt="Portada de {{ libro.titulo }}">
+      </div>
+
+      <!-- Información -->
+      <div class="col-md-8">
+        <span class="badge bg-secondary mb-2">{{ libro.categoria }}</span>
+        <h1 class="fw-bold text-primary mb-2">{{ libro.titulo }}</h1>
+        <h4 class="text-muted fs-5 mb-4">Autor: <span class="text-dark fw-semibold">{{ libro.autor }}</span></h4>
+
+        <div class="row mb-4 text-muted small">
+          <div class="col-6 col-sm-4 mb-2"><strong>ISBN:</strong> {{ libro.isbn }}</div>
+          <div class="col-6 col-sm-4 mb-2"><strong>Editorial:</strong> {{ libro.editorial }}</div>
+          <div class="col-6 col-sm-4 mb-2"><strong>Año:</strong> {{ libro.anioPublicacion }}</div>
+        </div>
+
+        <div class="mb-4">
+          <h5 class="fw-bold text-dark">Sinopsis</h5>
+          <p class="text-muted" style="line-height: 1.7;">{{ libro.descripcion || 'Sin descripción disponible para esta obra.' }}</p>
+        </div>
+
+        <!-- Estado de Disponibilidad y Botón de Préstamo -->
+        <div class="d-flex align-items-center gap-3 pt-3 border-top">
+          <span class="badge fs-6 px-3 py-2" [ngClass]="libro.disponible ? 'bg-success' : 'bg-danger'">
+            {{ libro.disponible ? 'Disponible para Préstamo' : 'Sin Stock Actual' }}
+          </span>
+
+          <button *ngIf="libro.disponible" 
+                  class="btn btn-primary px-4 py-2 fw-bold" 
+                  [disabled]="isSubmitting"
+                  (click)="solicitarPrestamo(libro.id)">
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            {{ isSubmitting ? 'Solicitando...' : 'Solicitar Retiro' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

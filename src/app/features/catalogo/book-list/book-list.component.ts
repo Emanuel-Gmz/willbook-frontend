@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -14,6 +14,7 @@ import { LibroResponse } from '../../../core/models/libro.models';
 })
 export class BookListComponent implements OnInit {
   private libroService = inject(LibroService);
+  private cdr = inject(ChangeDetectorRef); // <-- Inyectamos el detector de cambios
 
   libros: LibroResponse[] = [];
   searchTerm: string = '';
@@ -30,20 +31,20 @@ export class BookListComponent implements OnInit {
     
     this.libroService.buscarLibros(query).subscribe({
       next: (res: any) => {
-        // El backend puede devolver un array directo o un objeto con "mensaje" y "resultados"
         if (Array.isArray(res)) {
           this.libros = res;
-        } else if (res.resultados) {
-          this.libros = res.resultados;
-          this.mensajeVacio = res.mensaje;
+        } else {
+          this.libros = [];
+          this.mensajeVacio = 'No se encontraron libros.';
         }
+        this.isLoading = false;
+        this.cdr.detectChanges(); // <-- Forzamos a la vista a actualizarse y mostrar los libros
       },
       error: (err) => {
         console.error('Error al cargar catálogo', err);
-        this.mensajeVacio = 'Ocurrió un error al cargar el catálogo de libros.';
-      },
-      complete: () => {
+        this.mensajeVacio = 'Ocurrió un error al conectar con el servidor para cargar los libros.';
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     });
   }

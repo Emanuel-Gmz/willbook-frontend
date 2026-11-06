@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrestamoService } from '../../../core/services/prestamo.service';
 import { PrestamoPersonal } from '../../../core/models/prestamo.models';
@@ -12,6 +12,7 @@ import { PrestamoPersonal } from '../../../core/models/prestamo.models';
 })
 export class MisPrestamosComponent implements OnInit {
   private prestamoService = inject(PrestamoService);
+  private cdr = inject(ChangeDetectorRef); // <-- Inyectamos el detector de cambios
 
   prestamos: PrestamoPersonal[] = [];
   prestamosFiltrados: PrestamoPersonal[] = [];
@@ -32,18 +33,23 @@ export class MisPrestamosComponent implements OnInit {
         if (Array.isArray(res)) {
           this.prestamos = res;
           this.prestamosFiltrados = res;
-        } else if (res.prestamos) {
+        } else if (res && res.prestamos) {
           this.prestamos = res.prestamos;
           this.prestamosFiltrados = res.prestamos;
           this.mensajeVacio = res.mensaje;
+        } else {
+          this.prestamos = [];
+          this.prestamosFiltrados = [];
+          this.mensajeVacio = 'No tienes préstamos registrados actualmente.';
         }
+        this.isLoading = false;
+        this.cdr.detectChanges(); // <-- Forzamos a la vista a actualizarse
       },
       error: (err) => {
         console.error('Error al cargar préstamos', err);
         this.mensajeVacio = 'No se pudo cargar tu historial de préstamos.';
-      },
-      complete: () => {
         this.isLoading = false;
+        this.cdr.detectChanges(); // <-- Forzamos en caso de error
       }
     });
   }
