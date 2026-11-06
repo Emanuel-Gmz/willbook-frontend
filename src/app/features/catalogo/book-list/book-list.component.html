@@ -1,0 +1,74 @@
+<div class="container py-5">
+  <!-- Encabezado y Buscador -->
+  <div class="row mb-5 justify-content-center">
+    <div class="col-md-8 text-center">
+      <h1 class="fw-bold text-primary mb-3">Catálogo de WillBook</h1>
+      <p class="text-muted mb-4">Encuentra tu próxima lectura. Busca por título de la obra o autor.</p>
+      
+      <div class="input-group input-group-lg shadow-sm">
+        <input 
+          type="text" 
+          class="form-control border-end-0" 
+          placeholder="Buscar libros..." 
+          [(ngModel)]="searchTerm"
+          (keyup.enter)="onSearch()">
+        <button *ngIf="searchTerm" class="btn btn-outline-secondary border-start-0 bg-white" type="button" (click)="limpiarBusqueda()">
+          &times;
+        </button>
+        <button class="btn btn-primary px-4 fw-bold" type="button" (click)="onSearch()">
+          Buscar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado de Carga -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted">Explorando estanterías...</p>
+  </div>
+
+  <!-- Mensaje de Búsqueda sin resultados -->
+  <div *ngIf="!isLoading && mensajeVacio" class="alert alert-warning text-center shadow-sm" role="alert">
+    {{ mensajeVacio }}
+  </div>
+
+  <div *ngIf="!isLoading && libros.length === 0 && !mensajeVacio" class="text-center py-5 text-muted">
+    <p>Aún no hay libros cargados en el sistema.</p>
+  </div>
+
+  <!-- Grilla de Libros -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" *ngIf="!isLoading && libros.length > 0">
+    <div class="col" *ngFor="let libro of libros">
+      <div class="card h-100 book-card">
+        <!-- Etiqueta de disponibilidad -->
+        <span class="badge position-absolute top-0 end-0 m-2 shadow-sm" 
+              [ngClass]="libro.disponible ? 'bg-success' : 'bg-danger'">
+          {{ libro.disponible ? 'Disponible' : 'Sin Stock' }}
+        </span>
+        
+        <!-- Portada (Usamos un placeholder genérico si la URL falla o está vacía) -->
+        <div class="cover-container bg-white p-3 border-bottom">
+          <img [src]="libro.portadaUrl || 'https://placehold.co/300x450/F5EFEB/7A624E?text=Sin+Portada'" 
+               class="card-img-top book-cover" 
+               alt="Portada de {{ libro.titulo }}">
+        </div>
+        
+        <div class="card-body d-flex flex-column">
+          <span class="text-muted small mb-1 fw-semibold">{{ libro.categoria }}</span>
+          <h5 class="card-title fw-bold text-primary text-truncate" [title]="libro.titulo">{{ libro.titulo }}</h5>
+          <p class="card-text text-muted small mb-3">{{ libro.autor }}</p>
+          
+          <div class="mt-auto">
+            <!-- Redirecciona al componente book-detail que haremos después -->
+            <button class="btn btn-outline-primary w-100 fw-semibold" [routerLink]="['/catalogo', libro.id]">
+              Ver Detalles
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
