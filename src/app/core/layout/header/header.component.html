@@ -1,0 +1,52 @@
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background-color: #4A3320;">
+  <div class="container">
+    <a class="navbar-brand fw-bold" routerLink="/catalogo">
+      📚 WillBook
+    </a>
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav align-items-center gap-3">
+        
+        <!-- Si está autenticado -->
+        <ng-container *ngIf="authService.isAuthenticated()">
+          
+          <!-- Opciones para Lector -->
+          <ng-container *ngIf="usuarioActual?.rol === 'LECTOR'">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/mis-prestamos" routerLinkActive="active">Mis Préstamos</a>
+            </li>
+          </ng-container>
+
+          <!-- Saludo y Botón Salir -->
+          <li class="nav-item text-light small">
+            Hola, <span class="fw-bold">{{ usuarioActual?.nombreCompleto }}</span>
+          </li>
+          
+          <li class="nav-item">
+            <button class="btn btn-outline-light btn-sm px-3" (click)="logout()">
+              Cerrar Sesión
+            </button>
+          </li>
+        </ng-container>
+
+        <!-- Si NO está autenticado -->
+        <ng-container *ngIf="!authService.isAuthenticated()">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/auth/login">Iniciar Sesión</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-light btn-sm text-dark fw-bold px-3" routerLink="/auth/register">Registrarse</a>
+          </li>
+        </ng-container>
+
+      </ul>
+    </div>
+  </div>
+</nav>
