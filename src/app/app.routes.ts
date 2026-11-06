@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
+import { BookListComponent } from './features/catalogo/book-list/book-list.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
@@ -11,6 +12,9 @@ export const routes: Routes = [
       { path: 'register', component: RegisterComponent }
     ]
   },
-  // Ruta comodín para capturar URLs inexistentes y redirigir al login
+  { 
+    path: 'catalogo', 
+    component: BookListComponent 
+  },
   { path: '**', redirectTo: 'auth/login' }
 ];
