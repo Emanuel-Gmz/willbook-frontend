@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { BookListComponent } from './features/catalogo/book-list/book-list.component';
+import { MisPrestamosComponent } from './features/perfil/mis-prestamos/mis-prestamos.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
@@ -15,6 +16,10 @@ export const routes: Routes = [
   { 
     path: 'catalogo', 
     component: BookListComponent 
+  },
+  { 
+    path: 'mis-prestamos', 
+    component: MisPrestamosComponent 
   },
   { path: '**', redirectTo: 'auth/login' }
 ];
