@@ -1,59 +1,54 @@
-# WillbookFrontend
+# WillBook - Frontend Web
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.6.
+Este es el cliente web para el sistema de gestión de bibliotecas **WillBook**. Se trata de una Single Page Application (SPA) construida en **Angular** que interactúa con la API RESTful de WillBook. El sistema provee interfaces dinámicas basadas en los roles de los usuarios (Lector, Bibliotecario o Administrador).
 
-## Development server
+## 🛠️ Requisitos Previos
 
-To start a local development server, run:
+Para ejecutar este proyecto, necesitarás tener instalado:
+* **Node.js** (Versión 18 o superior recomendada)
+* **NPM** o **Yarn**
+* **Angular CLI** (`npm install -g @angular/cli`)
 
-```bash
-ng serve
-```
+## 🚀 Cómo ejecutar el proyecto
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+1. Clona el repositorio del frontend.
+2. Abre una terminal en el directorio raíz del proyecto.
+3. Instala las dependencias del proyecto ejecutando:
+   ```bash
+   npm install
+   ```
+4. Inicia el servidor de desarrollo:
+   ```bash
+   ng serve
+   # o alternativamente
+   npm start
+   ```
+5. Abre tu navegador web e ingresa a `http://localhost:4200`.
 
-## Code scaffolding
+*Nota: Asegúrate de que el backend de WillBook esté corriendo simultáneamente (típicamente en `http://localhost:8080`) para que la aplicación web pueda realizar peticiones a la API.*
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+---
 
-```bash
-ng generate component component-name
-```
+## 🎯 Acceso y Funcionalidades por Rol
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+La plataforma adapta su interfaz y funcionalidades dependiendo de si eres un usuario normal (Lector) o si eres parte del equipo de administración de la biblioteca.
 
-```bash
-ng generate --help
-```
+### 📖 Para Usuarios Lectores
+Los usuarios que se registran en la plataforma tienen el rol de `LECTOR`. Tienen acceso a:
 
-## Building
+* **Catálogo Público:** Pueden explorar, buscar y filtrar libros por título o autor.
+* **Solicitud de Préstamos:** Pueden reservar libros desde el catálogo. El sistema valida automáticamente que haya stock disponible y que el usuario no tenga multas pendientes.
+* **Mis Préstamos:** Un panel personal para ver el historial de los libros solicitados, vigentes, vencidos o devueltos. También permite reportar la pérdida o daño de un libro en curso.
+* **Mis Multas:** Una vista para revisar infracciones, consultar el estado de la cuenta (activa o suspendida) y ver motivos de las multas.
+* **Mi Perfil:** Permite editar información de contacto y cambiar la contraseña de acceso.
+* **Notificaciones:** Bandeja y campanita de alertas del sistema.
 
-To build the project run:
+### 🏛️ Para Bibliotecarios y Administradores
+Los miembros del staff ingresan con credenciales de `BIBLIOTECARIO` o `ADMIN`. Su interfaz incluye herramientas de gestión integral:
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+* **Dashboard (Panel de Control):** Vista general con métricas rápidas.
+* **Gestión de Libros (Catálogo Administrativo):** Permite crear, editar y consultar libros. Además, desde aquí gestionan el inventario agregando ejemplares físicos, registrando nuevos Autores y creando Categorías/Géneros.
+* **Retiros Pendientes:** Pantalla crítica donde el bibliotecario aprueba la entrega física de un libro reservado (cambiando su estado a "Prestado") o cancela reservas caducadas.
+* **Gestión de Multas:** Permite generar multas manuales a usuarios (ej. por romper un libro), registrar el pago/cobro en mostrador para rehabilitar cuentas, o anular multas generadas por error.
+* **Buscador de Perfiles:** Permite buscar a un Lector (por DNI o Nombre) y acceder a su "Expediente", viendo en una sola pantalla todos sus préstamos activos, su historial completo y sus deudas.
+* **Publicación de Anuncios:** Pueden redactar anuncios que verán todos los usuarios en la plataforma.
