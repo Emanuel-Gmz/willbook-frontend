@@ -57,9 +57,18 @@
           </div>
 
           <!-- Botón Agregar Ejemplar -->
-          <button class="btn btn-outline-primary btn-sm w-100 fw-semibold mt-2" 
-                  (click)="abrirModalEjemplar(libro)">
-            + Agregar Ejemplar Físico
+          <!-- Botones de Acción (Ejemplar y Editar) -->
+          <div class="mt-auto pt-2 d-flex gap-2">
+            <button class="btn btn-outline-primary btn-sm w-50 fw-semibold" (click)="abrirModalEjemplar(libro)">
+              + Ejemplar
+            </button>
+            <button class="btn btn-outline-warning btn-sm w-50 fw-semibold text-dark" (click)="abrirModalEditar(libro)">
+              Editar
+            </button>
+          </div>
+
+          <button class="btn btn-outline-danger btn-sm w-100 mt-2" (click)="eliminarLibro(libro.id)">
+          🗑️ Eliminar Libro
           </button>
         </div>
       </div>
@@ -149,6 +158,70 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="cerrarModalEjemplar()">Cancelar</button>
         <button type="button" class="btn btn-primary fw-bold" (click)="agregarEjemplar()" [disabled]="!nuevoCodigoInventario.trim()">Registrar Ejemplar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Editar Libro -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="mostrarModalEditar">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-primary">Editar Obra del Catálogo</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalEditar()"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmitEditarLibro()" #editForm="ngForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Título</label>
+              <input type="text" class="form-control" name="tituloEdit" [(ngModel)]="libroAEditar.titulo" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Autor</label>
+              <select class="form-select" name="autorIdEdit" [(ngModel)]="libroAEditar.autorId" required>
+                <option [ngValue]="0" disabled>Seleccione un autor</option>
+                <option *ngFor="let a of autores" [ngValue]="a.id">{{ a.nombre }} {{ a.apellido }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-semibold">ISBN</label>
+              <input type="text" class="form-control" name="isbnEdit" [(ngModel)]="libroAEditar.isbn" required>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-semibold">Editorial</label>
+              <input type="text" class="form-control" name="editorialEdit" [(ngModel)]="libroAEditar.editorial">
+            </div>
+            <div class="col-md-4 mb-3">
+              <label class="form-label fw-semibold">Año de Publicación</label>
+              <input type="number" class="form-control" name="anioEdit" [(ngModel)]="libroAEditar.anioPublicacion" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">Categoría / Género</label>
+              <select class="form-select" name="categoriaIdEdit" [(ngModel)]="libroAEditar.categoriaId" required>
+                <option [ngValue]="0" disabled>Seleccione una categoría</option>
+                <option *ngFor="let c of categorias" [ngValue]="c.id">{{ c.nombre }}</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-semibold">URL de la Portada</label>
+              <input type="text" class="form-control" name="portadaEdit" [(ngModel)]="libroAEditar.portadaUrl">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Descripción / Sinopsis</label>
+            <textarea class="form-control" name="descEdit" rows="3" [(ngModel)]="libroAEditar.descripcion"></textarea>
+          </div>
+          <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModalEditar()">Cancelar</button>
+            <button type="submit" class="btn btn-primary fw-bold" [disabled]="!editForm.valid">Guardar Cambios</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

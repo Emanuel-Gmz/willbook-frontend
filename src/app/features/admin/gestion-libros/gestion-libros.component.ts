@@ -149,4 +149,74 @@ export class GestionLibrosComponent implements OnInit {
       }
     });
   }
+
+  eliminarLibro(id: number): void {
+    if (confirm('¿Estás seguro de eliminar este libro?')) {
+      this.libroService.eliminarLibro(id).subscribe({
+        next: (res: any) => {
+          this.successMessage = res.message || 'Libro eliminado con éxito.';
+          this.cargarLibros();
+          this.cdr.detectChanges();
+        },
+        error: (err: any) => {
+          this.errorMessage = err.error?.message || 'No se pudo eliminar el libro.';
+          this.cdr.detectChanges();
+        }
+      });
+    }
+  }
+
+  // Variables de control para el modal de edición
+  mostrarModalEditar: boolean = false;
+  libroAEditarId: number = 0;
+  libroAEditar = {
+    titulo: '',
+    autorId: 0,
+    isbn: '',
+    editorial: '',
+    anioPublicacion: new Date().getFullYear(),
+    categoriaId: 0,
+    portadaUrl: '',
+    descripcion: ''
+  };
+
+  abrirModalEditar(libro: LibroResponse): void {
+    this.libroAEditarId = libro.id;
+    // Precargamos los datos actuales del libro en el formulario
+    this.libroAEditar = {
+      titulo: libro.titulo,
+      autorId: 0, // Si tu API devuelve el objeto autor/categoría con ID, asígnalo aquí; de lo contrario ajusta según tu modelo
+      isbn: libro.isbn,
+      editorial: libro.editorial,
+      anioPublicacion: libro.anioPublicacion,
+      categoriaId: 0,
+      portadaUrl: libro.portadaUrl,
+      descripcion: libro.descripcion
+    };
+    this.mostrarModalEditar = true;
+    this.cdr.detectChanges();
+  }
+
+  cerrarModalEditar(): void {
+    this.mostrarModalEditar = false;
+    this.cdr.detectChanges();
+  }
+
+  onSubmitEditarLibro(): void {
+    this.isLoading = true;
+    this.libroService.editarLibro(this.libroAEditarId, this.libroAEditar).subscribe({
+      next: () => {
+        this.successMessage = 'Libro actualizado correctamente.';
+        this.cerrarModalEditar();
+        this.cargarLibros();
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        this.errorMessage = err.error?.message || 'No se pudo actualizar el libro.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
 }
