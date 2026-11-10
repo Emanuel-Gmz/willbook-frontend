@@ -9,9 +9,10 @@ import { GestionLibrosComponent } from './features/admin/gestion-libros/gestion-
 import { GestionMultasComponent } from './features/admin/gestion-multas/gestion-multas.component';
 import { GestionCatalogosComponent } from './features/admin/gestion-catalogos/gestion-catalogos.component';
 import { PerfilLectorComponent } from './features/admin/perfil-lector/perfil-lector.component';
+import { WelcomeComponent } from './shared/components/welcome/welcome.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  { path: '', component: WelcomeComponent, pathMatch: 'full' },
   { 
     path: 'auth', 
     children: [

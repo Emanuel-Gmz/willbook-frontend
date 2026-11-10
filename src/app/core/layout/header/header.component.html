@@ -55,16 +55,16 @@
             </button>
           </li>
         </ng-container>
-
         <!-- Si NO está autenticado -->
-        <ng-container *ngIf="!authService.isAuthenticated()">
-          <li class="nav-item">
-            <a class="nav-link px-2 py-1" routerLink="/auth/login">Iniciar Sesión</a>
-          </li>
-          <li class="nav-item mt-2 mt-lg-0">
-            <a class="btn btn-light btn-sm text-dark fw-bold px-3 w-100 w-lg-auto" routerLink="/auth/register">Registrarse</a>
-          </li>
-        </ng-container>
+<ng-container *ngIf="!authService.isAuthenticated()">
+  <li class="nav-item">
+    <a class="nav-link px-2 py-1" routerLink="/auth/login">Iniciar Sesión</a>
+  </li>
+  <li class="nav-item mt-2 mt-lg-0">
+    <a class="btn btn-light btn-sm text-dark fw-bold px-3 w-100 w-lg-auto" routerLink="/auth/register">Registrarse</a>
+  </li>
+</ng-container>
+
 
       </ul>
     </div>
