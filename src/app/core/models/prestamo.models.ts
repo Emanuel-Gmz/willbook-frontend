@@ -23,7 +23,7 @@ export interface PrestamoPersonal {
   fechaDevolucionEsperada: string;
   fechaDevolucionReal: string;
   estadoInterno: string;
-  estadoVisual: string; // "Vigente", "Vencido/Atrasado", "Devuelto", "Pendiente de Retiro"
+  estadoVisual: string; 
   atrasado: boolean;
 }
 

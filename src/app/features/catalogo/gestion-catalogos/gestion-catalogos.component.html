@@ -1,0 +1,186 @@
+<div class="container py-5">
+  <h2 class="fw-bold text-primary mb-4">Administración de Autores y Categorías</h2>
+
+  <!-- Alertas de Éxito / Error -->
+  <div *ngIf="successMessage" class="alert alert-success shadow-sm" role="alert">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger shadow-sm" role="alert">{{ errorMessage }}</div>
+
+  <div class="row g-4 mb-5">
+    <!-- Sección Registrar Autor -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 p-4 h-100">
+        <h4 class="fw-bold text-dark mb-3">Registrar Nuevo Autor</h4>
+        <form (ngSubmit)="crearAutor()" #autorForm="ngForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Nombre</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevoAutor.nombre" name="nombre" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Apellido</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevoAutor.apellido" name="apellido" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">País de Origen</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevoAutor.paisOrigen" name="paisOrigen">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Biografía</label>
+            <textarea class="form-control" [(ngModel)]="nuevoAutor.biografia" name="biografia" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary fw-bold w-100" [disabled]="!autorForm.valid">Guardar Autor</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Sección Registrar Categoría -->
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 p-4 h-100">
+        <h4 class="fw-bold text-dark mb-3">Registrar Nueva Categoría</h4>
+        <form (ngSubmit)="crearCategoria()" #catForm="ngForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Nombre de la Categoría</label>
+            <input type="text" class="form-control" [(ngModel)]="nuevaCategoria.nombre" name="nombreCat" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea class="form-control" [(ngModel)]="nuevaCategoria.descripcion" name="descCat" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary fw-bold w-100" [disabled]="!catForm.valid">Guardar Categoría</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listados en Grilla (2 Columnas: Autores y Categorías) -->
+  <div class="row g-4">
+    <!-- Tabla Autores -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 p-4 h-100">
+        <h4 class="fw-bold text-primary mb-3">Autores Registrados</h4>
+        <div class="table-responsive" *ngIf="autores.length > 0; else sinAutores">
+          <table class="table table-hover align-middle mb-0 small">
+            <thead class="table-light">
+              <tr>
+                <th>Nombre</th>
+                <th>País</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of autores">
+                <td class="fw-bold text-dark">{{ a.apellido }}, {{ a.nombre }}</td>
+                <td>{{ a.paisOrigen || 'N/A' }}</td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-1">
+                    <button class="btn btn-outline-warning btn-sm text-dark px-2 py-1" (click)="abrirModalEditarAutor(a)">Editar</button>
+                    <button class="btn btn-outline-danger btn-sm px-2 py-1" (click)="eliminarAutor(a.id)">Eliminar</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #sinAutores>
+          <p class="text-muted small fst-italic mb-0">No hay autores registrados.</p>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Tabla Categorías -->
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 p-4 h-100">
+        <h4 class="fw-bold text-primary mb-3">Categorías Registradas</h4>
+        <div class="table-responsive" *ngIf="categorias.length > 0; else sinCategorias">
+          <table class="table table-hover align-middle mb-0 small">
+            <thead class="table-light">
+              <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of categorias">
+                <td class="fw-bold text-dark">{{ c.nombre }}</td>
+                <td class="text-muted text-truncate" style="max-width: 150px;">{{ c.descripcion || 'Sin descripción' }}</td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center gap-1">
+                    <button class="btn btn-outline-warning btn-sm text-dark px-2 py-1" (click)="abrirModalEditarCategoria(c)">Editar</button>
+                    <button class="btn btn-outline-danger btn-sm px-2 py-1" (click)="eliminarCategoria(c.id)">Eliminar</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ng-template #sinCategorias>
+          <p class="text-muted small fst-italic mb-0">No hay categorías registradas.</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Editar Autor -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="mostrarModalEditarAutor">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-primary">Editar Autor</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalEditarAutor()"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmitEditarAutor()" #editAutorForm="ngForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Nombre</label>
+            <input type="text" class="form-control" name="nombreEdit" [(ngModel)]="autorAEditar.nombre" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Apellido</label>
+            <input type="text" class="form-control" name="apellidoEdit" [(ngModel)]="autorAEditar.apellido" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">País de Origen</label>
+            <input type="text" class="form-control" name="paisEdit" [(ngModel)]="autorAEditar.paisOrigen">
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Biografía</label>
+            <textarea class="form-control" name="bioEdit" rows="3" [(ngModel)]="autorAEditar.biografia"></textarea>
+          </div>
+          <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModalEditarAutor()">Cancelar</button>
+            <button type="submit" class="btn btn-primary fw-bold" [disabled]="!editAutorForm.valid">Guardar Cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Editar Categoría -->
+<div class="modal fade show" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);" *ngIf="mostrarModalEditarCategoria">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold text-primary">Editar Categoría</h5>
+        <button type="button" class="btn-close" (click)="cerrarModalEditarCategoria()"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSubmitEditarCategoria()" #editCatForm="ngForm">
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Nombre de la Categoría</label>
+            <input type="text" class="form-control" name="nombreCatEdit" [(ngModel)]="categoriaAEditar.nombre" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Descripción</label>
+            <textarea class="form-control" name="descCatEdit" rows="3" [(ngModel)]="categoriaAEditar.descripcion"></textarea>
+          </div>
+          <div class="modal-footer px-0 pb-0">
+            <button type="button" class="btn btn-secondary" (click)="cerrarModalEditarCategoria()">Cancelar</button>
+            <button type="submit" class="btn btn-primary fw-bold" [disabled]="!editCatForm.valid">Guardar Cambios</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PrestamoService } from '../../../core/services/prestamo.service';
-import { PrestamoDetalle } from '../../../core/models/prestamo.models';
+import { PrestamoService } from '../../core/services/prestamo.service';
+import { PrestamoDetalle } from '../../core/models/prestamo.models';
 
 @Component({
   selector: 'app-gestion-prestamos',

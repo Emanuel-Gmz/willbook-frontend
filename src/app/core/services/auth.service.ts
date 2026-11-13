@@ -1,23 +1,31 @@
-import { Injectable, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable, tap } from 'rxjs';
 import { AuthRequest, AuthResponse, RegisterRequest } from '../models/auth.models';
+import { JwtPayload } from '../models/jwt-payload.model';
+import { Role, User } from '../models/user';
+import { environment } from '../../../environments/environment';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
-  
-  private apiUrl = 'http://localhost:8080/api/v1/auth';
+  private esBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+
+  private apiUrl = `${environment.apiUrl}/auth`;
   private tokenKey = 'willbook_token';
   private userKey = 'willbook_user';
 
-  // Estado reactivo para que el menú de navegación reaccione en tiempo real
-  private currentUserSubject = new BehaviorSubject<AuthResponse | null>(this.getUserFromStorage());
-  public currentUser$ = this.currentUserSubject.asObservable();
+  // Signals reactivos globales
+  public token = signal<string | null>(this.leerStorage(this.tokenKey));
+  public currentUser = signal<User | null>(this.getUserFromStorage());
+  public isAuthenticated = computed(() => !!this.token() && !!this.currentUser());
+  public userRole = computed(() => this.currentUser()?.role ?? null);
+
+  // Mantendremos compatibilidad con BehaviorSubject si componentes antiguos lo requieren
+  // pero usaremos Signals por defecto.
 
   login(credentials: AuthRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
@@ -32,40 +40,84 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
-    this.currentUserSubject.next(null);
+    if (this.esBrowser) {
+      localStorage.removeItem(this.tokenKey);
+      localStorage.removeItem(this.userKey);
+    }
+    this.token.set(null);
+    this.currentUser.set(null);
     this.router.navigate(['/auth/login']);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return this.token();
   }
 
-  get currentUserValue(): AuthResponse | null {
-    return this.currentUserSubject.value;
-  }
-
-  isAuthenticated(): boolean {
-    return !!this.getToken();
+  hasRole(requiredRoles: Role[]): boolean {
+    const role = this.userRole();
+    return role ? requiredRoles.includes(role) : false;
   }
 
   private setSession(authResult: AuthResponse): void {
-    localStorage.setItem(this.tokenKey, authResult.token);
-    // Guardamos el resto de los datos (rol, nombre) para usarlos en la UI sin decodificar el token
-    const userData = { ...authResult, token: '' }; 
-    localStorage.setItem(this.userKey, JSON.stringify(userData));
-    this.currentUserSubject.next(authResult);
+    if (this.esBrowser) {
+      localStorage.setItem(this.tokenKey, authResult.token);
+    }
+    const user = this.buildUserFromToken(authResult.token, authResult);
+    if (user && this.esBrowser) {
+      localStorage.setItem(this.userKey, JSON.stringify(user));
+    }
+    this.token.set(authResult.token);
+    this.currentUser.set(user);
   }
 
-  private getUserFromStorage(): AuthResponse | null {
-    const userJson = localStorage.getItem(this.userKey);
-    const token = this.getToken();
-    if (userJson && token) {
-      const user = JSON.parse(userJson);
-      user.token = token;
-      return user;
-    }
+  private getUserFromStorage(): User | null {
+  try {
+    const userJson = this.leerStorage(this.userKey);
+    return userJson ? JSON.parse(userJson) : null;
+  } catch {
     return null;
+  }
+}
+
+  private buildUserFromToken(token: string, fallback: AuthResponse): User | null {
+    const payload = this.getPayload(token);
+    if (!payload) {
+      return {
+        id: 0,
+        username: '',
+        name: fallback.nombreCompleto,
+        apellido: '',
+        role: fallback.rol as Role
+      };
+    }
+    return {
+      id: payload.id,
+      username: payload.sub,
+      name: payload.name,
+      apellido: payload.surname,
+      role: (payload.rol || fallback.rol) as Role
+    };
+  }
+
+  private getPayload(token?: string): JwtPayload | null {
+  
+  const jwt = token ?? this.leerStorage(this.tokenKey);
+  if (!jwt) return null;
+  try {
+    const base64 = jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const json = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+        .join('')
+    );
+    return JSON.parse(json) as JwtPayload;
+  } catch {
+    return null;
+  }
+}
+
+  private leerStorage(key: string): string | null {
+    return this.esBrowser ? localStorage.getItem(key) : null;
   }
 }

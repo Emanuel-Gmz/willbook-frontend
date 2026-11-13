@@ -16,7 +16,7 @@ export class HeaderComponent {
   private router = inject(Router);
 
   get usuarioActual() {
-    return this.authService.currentUserValue;
+    return this.authService.currentUser()
   }
 
   logout(): void {

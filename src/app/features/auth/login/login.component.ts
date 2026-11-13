@@ -26,8 +26,8 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     // Si ya está autenticado, lo redirigimos automáticamente para evitar este error visual
     if (this.authService.isAuthenticated()) {
-      const user = this.authService.currentUserValue;
-      if (user?.rol === 'LECTOR') {
+      const user = this.authService.currentUser();
+      if (user?.role === 'LECTOR') {
         this.router.navigate(['/catalogo']);
       } else {
         this.router.navigate(['/admin/gestion-prestamos']);

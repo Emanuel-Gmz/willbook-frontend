@@ -2,8 +2,8 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { LibroService } from '../../../core/services/libro.service';
-import { LibroResponse } from '../../../core/models/libro.models';
+import { LibroService } from '../../core/services/libro.service';
+import { LibroResponse } from '../../core/models/libro.models';
 
 @Component({
   selector: 'app-gestion-libros',
