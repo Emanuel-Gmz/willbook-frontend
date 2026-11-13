@@ -15,7 +15,7 @@
         <ng-container *ngIf="authService.isAuthenticated()">
           
           <!-- Opciones para Lector -->
-          <ng-container *ngIf="usuarioActual?.rol === 'LECTOR'">
+          <ng-container *ngIf="usuarioActual?.role === 'LECTOR'">
             <li class="nav-item">
               <a class="nav-link px-2 py-1" routerLink="/catalogo" routerLinkActive="active">Catálogo</a>
             </li>
@@ -25,7 +25,7 @@
           </ng-container>
 
           <!-- Opciones para Bibliotecario / Admin -->
-          <ng-container *ngIf="usuarioActual?.rol === 'BIBLIOTECARIO' || usuarioActual?.rol === 'ADMIN'">
+          <ng-container *ngIf="usuarioActual?.role === 'BIBLIOTECARIO' || usuarioActual?.role === 'ADMIN'">
             <li class="nav-item">
               <a class="nav-link px-2 py-1" routerLink="/admin/gestion-prestamos" routerLinkActive="active">Gestionar Préstamos</a>
             </li>
@@ -46,7 +46,7 @@
           </li>
 
           <li class="nav-item text-light small ms-lg-2 mt-2 mt-lg-0">
-            Hola, <span class="fw-bold">{{ usuarioActual?.nombreCompleto }}</span>
+            Hola, <span class="fw-bold">{{ usuarioActual?.name }} {{ usuarioActual?.apellido }}</span>
           </li>
           
           <li class="nav-item mt-1 mt-lg-0">

@@ -1,7 +1,7 @@
 export interface EjemplarResponse {
   id: number;
   codigoInventario: string;
-  estado: string; // 'DISPONIBLE', 'RESERVADO', 'PRESTADO', etc.
+  estado: string; 
 }
 
 export interface LibroResponse {
